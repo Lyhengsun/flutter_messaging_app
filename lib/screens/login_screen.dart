@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_messaging_app/components/my_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
