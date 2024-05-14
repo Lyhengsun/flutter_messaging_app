@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_messaging_app/components/my_text_field.dart';
 
-class LoginScreen extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {
   final void Function() onTap;
-  const LoginScreen({super.key, required this.onTap});
+  const RegisterScreen({super.key, required this.onTap});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // login message
                 const Text(
-                  "Welcome back! we've missed you",
+                  "Register and join us now!",
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
 
@@ -61,10 +63,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
                 const SizedBox(
+                  height: 10,
+                ),
+
+                // confirm password textfield
+                MyTextField(
+                  controller: confirmPasswordController,
+                  hintText: "Confirm password",
+                ),
+
+                const SizedBox(
                   height: 40,
                 ),
 
-                // sign in button
+                // sign up button
                 GestureDetector(
                   onTap: () {},
                   child: Container(
@@ -75,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: EdgeInsets.all(20),
                       child: Center(
                         child: Text(
-                          "Sign in",
+                          "Sign up",
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -89,12 +101,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 40,
                 ),
+
                 // register now button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      "No account?",
+                      "Already have an account?",
                       style: TextStyle(fontSize: 16),
                     ),
                     const SizedBox(
@@ -103,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     GestureDetector(
                       onTap: widget.onTap,
                       child: const Text(
-                        "Register Now",
+                        "Sign in",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

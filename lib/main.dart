@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_messaging_app/screens/login_screen.dart';
+import 'package:flutter_messaging_app/services/auth/login_or_register.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,8 +18,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const LoginScreen(),
+      home: const LoginOrRegister(),
     );
   }
 }
-
