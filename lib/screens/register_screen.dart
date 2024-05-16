@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_messaging_app/components/my_button.dart';
+import 'package:flutter_messaging_app/components/my_sized_box.dart';
 import 'package:flutter_messaging_app/components/my_text_field.dart';
+import 'package:flutter_messaging_app/services/auth/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   final void Function() onTap;
@@ -15,8 +19,44 @@ class RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
+  void signUp() async {
+    if (emailController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please fill in your email"),
+        ),
+      );
+      return;
+    }
+    if (passwordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Password don't match. Please try again"),
+        ),
+      );
+      return;
+    }
+
+    final authService = Provider.of<AuthService>(context, listen: false);
+
+    try {
+      await authService.signUpWithEmailAndPassword(
+        emailController.text,
+        passwordController.text,
+      );
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    double fontScale = MediaQuery.of(context).size.height / 900;
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       body: SafeArea(
@@ -36,12 +76,14 @@ class RegisterScreenState extends State<RegisterScreen> {
                 ),
 
                 // login message
-                const Text(
+                Text(
                   "Register and join us now!",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 24 * fontScale, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(
+                const MySizedBox(
                   height: 40,
                 ),
 
@@ -51,7 +93,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                   hintText: "Email",
                 ),
 
-                const SizedBox(
+                const MySizedBox(
                   height: 10,
                 ),
 
@@ -62,7 +104,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                   obscureText: true,
                 ),
 
-                const SizedBox(
+                const MySizedBox(
                   height: 10,
                 ),
 
@@ -70,35 +112,17 @@ class RegisterScreenState extends State<RegisterScreen> {
                 MyTextField(
                   controller: confirmPasswordController,
                   hintText: "Confirm password",
+                  obscureText: true,
                 ),
 
-                const SizedBox(
+                const MySizedBox(
                   height: 40,
                 ),
 
                 // sign up button
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: const Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Center(
-                        child: Text(
-                          "Sign up",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                MyButton(onTap: signUp, text: "Sign up"),
 
-                const SizedBox(
+                const MySizedBox(
                   height: 40,
                 ),
 
@@ -106,19 +130,19 @@ class RegisterScreenState extends State<RegisterScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       "Already have an account?",
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 16 * fontScale),
                     ),
-                    const SizedBox(
+                    const MySizedBox(
                       width: 4,
                     ),
                     GestureDetector(
                       onTap: widget.onTap,
-                      child: const Text(
+                      child: Text(
                         "Sign in",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16 * fontScale,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

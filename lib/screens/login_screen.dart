@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_messaging_app/components/my_button.dart';
+import 'package:flutter_messaging_app/components/my_sized_box.dart';
 import 'package:flutter_messaging_app/components/my_text_field.dart';
 import 'package:flutter_messaging_app/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
@@ -38,6 +40,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double fontScale = MediaQuery.of(context).size.height / 900;
+
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       body: SafeArea(
@@ -57,12 +61,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
                 // login message
-                const Text(
+                Text(
                   "Welcome back! we've missed you",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 24 * fontScale, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(
+                const MySizedBox(
                   height: 40,
                 ),
 
@@ -72,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   hintText: "Email",
                 ),
 
-                const SizedBox(
+                const MySizedBox(
                   height: 10,
                 ),
 
@@ -83,52 +89,33 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: true,
                 ),
 
-                const SizedBox(
+                const MySizedBox(
                   height: 40,
                 ),
 
                 // sign in button
-                GestureDetector(
-                  onTap: signIn,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: const Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Center(
-                        child: Text(
-                          "Sign in",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                MyButton(onTap: signIn, text: "Sign in"),
 
-                const SizedBox(
+                const MySizedBox(
                   height: 40,
                 ),
                 // register now button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       "No account?",
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 16 * fontScale),
                     ),
-                    const SizedBox(
+                    const MySizedBox(
                       width: 4,
                     ),
                     GestureDetector(
                       onTap: widget.onTap,
-                      child: const Text(
+                      child: Text(
                         "Register Now",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16 * fontScale,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

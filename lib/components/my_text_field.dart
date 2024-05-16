@@ -13,10 +13,12 @@ class MyTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double fontScale = MediaQuery.of(context).size.height / 900;
+
     return TextField(
       controller: controller,
       obscureText: obscureText,
-      style: const TextStyle(fontSize: 18),
+      style: TextStyle(fontSize: 18 * fontScale),
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -31,7 +33,7 @@ class MyTextField extends StatelessWidget {
         ),
         fillColor: Colors.grey[300],
         filled: true,
-        hintStyle: const TextStyle(color: Colors.grey, fontSize: 18),
+        hintStyle: TextStyle(color: Colors.grey, fontSize: 18 * fontScale),
         hintText: hintText,
       ),
     );
