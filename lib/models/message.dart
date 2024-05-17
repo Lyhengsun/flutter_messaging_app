@@ -7,15 +7,21 @@ class MessageModel {
   final String message;
   final Timestamp timestamp;
 
-  MessageModel(this.senderId, this.senderEmail, this.receiverId, this.message, this.timestamp);
+  const MessageModel({
+    required this.senderId,
+    required this.senderEmail,
+    required this.receiverId,
+    required this.message,
+    required this.timestamp,
+  });
 
   Map<String, dynamic> toMap() {
     return {
-      "senderId" : senderId,
-      "senderEmail" : senderEmail,
-      "receiverId" : receiverId,
-      "message" : message,
-      "timestamp" : timestamp,
+      "senderId": senderId,
+      "senderEmail": senderEmail,
+      "receiverId": receiverId,
+      "message": message,
+      "timestamp": timestamp,
     };
   }
 }
