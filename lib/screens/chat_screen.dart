@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_messaging_app/components/my_text_field.dart';
 import 'package:flutter_messaging_app/services/chat/chat_service.dart';
 
@@ -68,7 +67,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // align message to the right if it is from the current, left if it is the other user
     var alignment = (data["senderId"] == _firebaseAuth.currentUser!.uid) ? Alignment.centerRight : Alignment.centerLeft;
-    
+
   }
 
   // build message input
