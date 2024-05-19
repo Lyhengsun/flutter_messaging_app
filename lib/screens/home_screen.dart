@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_messaging_app/screens/screens.dart';
 import 'package:flutter_messaging_app/services/auth/auth_service.dart';
 import 'package:flutter_messaging_app/services/chat/chat_service.dart';
+import 'package:flutter_messaging_app/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -100,6 +101,9 @@ class _HomePageState extends State<HomePage> {
                 return Text("start your conversation with ${data["email"]}");
               }
               var lastMessage = messageList.last.data() as Map<String, dynamic>;
+              Timestamp lastMessageTimestamp = lastMessage["timestamp"];
+              String timestampString =
+                  dateToTimeString(lastMessageTimestamp.toDate());
               return Row(
                 children: [
                   Text(
@@ -117,6 +121,7 @@ class _HomePageState extends State<HomePage> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
+                  Text(timestampString),
                 ],
               );
             },

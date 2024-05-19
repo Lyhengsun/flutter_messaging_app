@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_messaging_app/components/my_text_field.dart';
 import 'package:flutter_messaging_app/services/chat/chat_service.dart';
+import 'package:flutter_messaging_app/utils/utils.dart';
 
 class ChatScreen extends StatefulWidget {
   final String receiverUserEmail;
@@ -84,19 +85,49 @@ class _ChatScreenState extends State<ChatScreen> {
           children: () {
             List<Widget> messageItemList = [];
 
-            // check if the sender is the same. if true show email, else no email
             String userEmail = "";
+            int lastMessageMilliseconds = 0;
             for (var i = 0; i < messageDocumentList.length; i++) {
-              String newUserEmail = (messageDocumentList[i].data()
-                  as Map<String, dynamic>)["senderEmail"];
+              Map<String, dynamic> newMessage =
+                  messageDocumentList[i].data() as Map<String, dynamic>;
+
+              String newUserEmail = newMessage["senderEmail"];
+              DateTime newMessageDateTime =
+                  (newMessage["timestamp"] as Timestamp).toDate();
+              int newMessageMilliseconds =
+                  newMessageDateTime.millisecondsSinceEpoch;
+
+              // check if the sender is the same. if true show email, else no email
+              bool sameUser = false;
               if (newUserEmail != userEmail) {
                 userEmail = newUserEmail;
-                messageItemList
-                    .add(_buildMessageItem(messageDocumentList[i], false));
               } else {
-                messageItemList
-                    .add(_buildMessageItem(messageDocumentList[i], true));
+                sameUser = true;
               }
+
+              // check if the message is sent over 10 minutes later. if true, show time
+              bool isOverTenMinutes = false;
+              if (newMessageMilliseconds - lastMessageMilliseconds >= 600000) {
+                isOverTenMinutes = true;
+              }
+              // always compare it to the last message timestamp
+              lastMessageMilliseconds = newMessageMilliseconds;
+
+              // check if the message is not from today
+              bool laterThanYesterday = false;
+              DateTime currentTime = DateTime.now();
+              if (newMessageDateTime.day != currentTime.day ||
+                  newMessageDateTime.month != currentTime.month ||
+                  newMessageDateTime.year != currentTime.year) {
+                laterThanYesterday = true;
+              }
+
+              messageItemList.add(_buildMessageItem(
+                messageDocumentList[i],
+                sameUser: sameUser,
+                isOverTenMinutes: isOverTenMinutes,
+                laterThanYesterday: laterThanYesterday,
+              ));
             }
             return messageItemList;
           }(),
@@ -106,7 +137,12 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   // build message item
-  Widget _buildMessageItem(DocumentSnapshot document, bool sameUser) {
+  Widget _buildMessageItem(
+    DocumentSnapshot document, {
+    required bool sameUser,
+    bool isOverTenMinutes = false,
+    bool laterThanYesterday = false,
+  }) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
     // align message to the right if it is from the current, left if it is the other user
@@ -119,51 +155,72 @@ class _ChatScreenState extends State<ChatScreen> {
         isCurrentUser ? Colors.lightBlue : Colors.grey.shade300;
     Color messageTextColor = isCurrentUser ? Colors.white : Colors.black87;
 
-    return Container(
-      alignment: alignment,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.7,
-        child: Column(
-          crossAxisAlignment: crossAlignment,
-          children: [
-            // show the sender name only once for consecutive messages
-            sameUser
-                ? const SizedBox()
-                : Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
-                  child: Text(
-                      data["senderEmail"],
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
+    Timestamp messageTimestamp = data["timestamp"];
+    String timestampString = dateToTimeString(
+      messageTimestamp.toDate(),
+      fullDateTime: laterThanYesterday,
+    );
+
+    return Column(
+      children: [
+        isOverTenMinutes
+            ? Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                child: Text(timestampString),
+              )
+            : const SizedBox(),
+        Container(
+          alignment: alignment,
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.7,
+            child: Column(
+              crossAxisAlignment: crossAlignment,
+              children: [
+                // show the sender name only once for consecutive messages
+                sameUser
+                    ? const SizedBox()
+                    : Padding(
+                        padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
+                        child: Text(
+                          data["senderEmail"],
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: messageBubbleColor,
+                    borderRadius: BorderRadius.only(
+                      topRight: isCurrentUser
+                          ? Radius.zero
+                          : const Radius.circular(10),
+                      bottomRight: isCurrentUser
+                          ? Radius.zero
+                          : const Radius.circular(10),
+                      topLeft: isCurrentUser
+                          ? const Radius.circular(10)
+                          : Radius.zero,
+                      bottomLeft: isCurrentUser
+                          ? const Radius.circular(10)
+                          : Radius.zero,
                     ),
+                  ),
+                  child: Text(
+                    data["message"],
+                    style: TextStyle(color: messageTextColor),
+                  ),
                 ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-              decoration: BoxDecoration(
-                color: messageBubbleColor,
-                borderRadius: BorderRadius.only(
-                  topRight:
-                      isCurrentUser ? Radius.zero : const Radius.circular(10),
-                  bottomRight:
-                      isCurrentUser ? Radius.zero : const Radius.circular(10),
-                  topLeft:
-                      isCurrentUser ? const Radius.circular(10) : Radius.zero,
-                  bottomLeft:
-                      isCurrentUser ? const Radius.circular(10) : Radius.zero,
+                const SizedBox(
+                  height: 2,
                 ),
-              ),
-              child: Text(
-                data["message"],
-                style: TextStyle(color: messageTextColor),
-              ),
+              ],
             ),
-            const SizedBox(
-              height: 2,
-            ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
