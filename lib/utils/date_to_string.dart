@@ -1,5 +1,3 @@
-import 'package:flutter/scheduler.dart';
-
 String dateToTimeString(DateTime date, {bool onlyDate = false, bool fullDateTime = false}) {
   int days = date.day;
   int months = date.month;
